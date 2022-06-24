@@ -86,13 +86,21 @@ netology
 Это можно сделать, поменяв стандартные потоки местами через промежуточный новый дескриптор, который вы научились создавать в предыдущем вопросе.
 ### Ответ
 
-Пример. 
+Пример с промежуточным дескриптором. В итоге получаем перевернутую через pipe строку из `stderr`. При этом `stdout` тоже видим
 ```bash
+vagrant@vagrant:~$ (echo 'To stderr' && ls -wrong_param) 2>&1 1>&5 5>&2 | rev
+To stderr
+’marap_gnor‘ :htdiw enil dilavni :sl
 ```
 10. Что выведет команда `cat /proc/$$/environ`? Как еще можно получить аналогичный по содержанию вывод?
 ### Ответ
-```bash
-```
+Команда выведет список переменных окружения и их значения
+Более удобный аналог - встроенная команда `set`
+*set [--abefhkmnptuvxBCEHPT] [-o option-name] [arg ...]
+       set [+abefhkmnptuvxBCEHPT] [+o option-name] [arg ...]
+              Without  options,  the name and value of each shell variable are displayed in a format that can be reused as input for
+              setting or resetting the currently-set variables.*
+	      
 11. Используя `man`, опишите что доступно по адресам `/proc/<PID>/cmdline`, `/proc/<PID>/exe`.
 ### Ответ
 ```bash
