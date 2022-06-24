@@ -129,8 +129,9 @@ sse4_2
     ```
 
 	Почитайте, почему так происходит, и как изменить поведение.
-### Ответ
-Нужно запускать с опцией принудительного выделения псевдо-терминала (-t), 
+### Ответ 
+Нужно запускать с опцией принудительного выделения псевдо-терминала (-t), используется для запуска программ на удаленном хосте (а не получения удаленного сеанса оболочки
+
 ```bash
 vagrant@vagrant:~$ ssh localhost 'tty'
 vagrant@localhost's password:
@@ -142,5 +143,31 @@ Connection to localhost closed.
 ```
 >13. Бывает, что есть необходимость переместить запущенный процесс из одной сессии в другую. Попробуйте сделать это, воспользовавшись `reptyr`. Например, так можно перенести в `screen` процесс, который вы запустили по ошибке в обычной SSH-сессии.
 ### Ответ
+Запустил в одной из сессий ping
+```bash
+vagrant@vagrant:~$ ping yandex.ru
+PING yandex.ru (77.88.55.77) 56(84) bytes of data.
+64 bytes from yandex.ru (77.88.55.77): icmp_seq=1 ttl=56 time=153 ms
+64 bytes from yandex.ru (77.88.55.77): icmp_seq=2 ttl=56 time=92.7 ms
+64 bytes from yandex.ru (77.88.55.77): icmp_seq=3 ttl=56 time=62.0 ms
+64 bytes from yandex.ru (77.88.55.77): icmp_seq=4 ttl=56 time=125 ms
+```
+Далее,в другой сессии, после `sudo apt install reptyr' и редактирования /etc/sysctl.d/10-ptrace.conf (kernel.yama.ptrace_scope исправить на 0 )
+Так и не удалось добиться, чтобы `reptyr` заработал (((
+```bash
+vagrant@vagrant:~$ ps -ef | grep ping
+vagrant     1049     990  0 18:09 pts/0    00:00:00 ping yandex.ru
+vagrant     1056    1040  0 18:09 pts/1    00:00:00 grep --color=auto ping
+vagrant@vagrant:~$ reptyr -T 1049
+Unable to attach to pid 1225: Operation not permitted
+```
 >14. `sudo echo string > /root/new_file` не даст выполнить перенаправление под обычным пользователем, так как перенаправлением занимается процесс shell'а, который запущен без `sudo` под вашим пользователем. Для решения данной проблемы можно использовать конструкцию `echo string | sudo tee /root/new_file`. Узнайте что делает команда `tee` и почему в отличие от `sudo echo` команда с `sudo tee` будет работать.
 ### Ответ
+`tee` - считывание со стандартного ввода и запись в стандартный вывод и файлы. Это НЕ built-in команда, в отличие от `echo`. Поэтому `sudo` и будет работать, т.к. будет запущен отдельный процесс
+```bash
+vagrant@vagrant:~$ type tee
+tee is /usr/bin/tee
+vagrant@vagrant:~$ type echo
+echo is a shell builtin
+```
+
