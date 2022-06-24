@@ -73,6 +73,18 @@ gnirts lamron si sihT
 ```
 >6. Получится ли находясь в графическом режиме, вывести данные из PTY в какой-либо из эмуляторов TTY? Сможете ли вы наблюдать выводимые данные?
 ### Ответ
+
+Получится
+```bash
+vagrant@vagrant:~$ echo 'Hello!' > /dev/tty1
+```
+В другой сессии видим
+```bash
+vagrant@vagrant:~$ tty
+/dev/tty1
+vagrant@vagrant:~$ Hello!
+```
+
 >7. Выполните команду `bash 5>&1`. К чему она приведет? Что будет, если вы выполните `echo netology > /proc/$$/fd/5`? Почему так происходит?
 ### Ответ
 
@@ -152,7 +164,7 @@ PING yandex.ru (77.88.55.77) 56(84) bytes of data.
 64 bytes from yandex.ru (77.88.55.77): icmp_seq=3 ttl=56 time=62.0 ms
 64 bytes from yandex.ru (77.88.55.77): icmp_seq=4 ttl=56 time=125 ms
 ```
-Далее,в другой сессии, после `sudo apt install reptyr' и редактирования /etc/sysctl.d/10-ptrace.conf (kernel.yama.ptrace_scope исправить на 0 )
+Далее,в другой сессии, после `sudo apt install reptyr` и редактирования /etc/sysctl.d/10-ptrace.conf (kernel.yama.ptrace_scope исправить на 0 )
 Так и не удалось добиться, чтобы `reptyr` заработал (((
 ```bash
 vagrant@vagrant:~$ ps -ef | grep ping
