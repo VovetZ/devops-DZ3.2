@@ -161,15 +161,20 @@ Connection to localhost closed.
 Запустил в одной из сессий `top`, далее `Ctrl+Z`
 
 ```bash
-vk@vk-desktop:/etc/netplan$ ping yandex.ru
-PING yandex.ru (5.255.255.80) 56(84) bytes of data.
-64 bytes from yandex.ru (5.255.255.80): icmp_seq=1 ttl=250 time=4.97 ms
-64 bytes from yandex.ru (5.255.255.80): icmp_seq=2 ttl=250 time=4.99 ms
-64 bytes from yandex.ru (5.255.255.80): icmp_seq=3 ttl=250 time=4.95 ms
-```
-Далее,в другой сессии, после `sudo apt install reptyr` и редактирования `/etc/sysctl.d/10-ptrace.conf` (`kernel.yama.ptrace_scope = 0`)
+MiB Mem :  15957,0 total,  10405,2 free,   2760,9 used,   2790,9 buff/cache
+MiB Swap:   2048,0 total,   2048,0 free,      0,0 used.  12840,2 avail Mem 
 
-```
+    PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND                                         
+   2227 root      20   0   24,2g  59608  36760 S   6,7   0,4   0:27.24 Xorg                                            
+   2381 vk        20   0 4373892 345904 113452 S   6,7   2,1   0:34.92 gnome-shell                                     
+   7855 vk        20   0   13232   4108   3228 R   6,7   0,0   0:00.01 top                                             
+      1 root      20   0  168968  14184   8116 S   0,0   0,1   0:05.05 systemd                                         
+      2 root      20   0       0      0      0 S   0,0   0,0   0:00.00 kthreadd                                        
+    ...........................................................                                    
+     43 root      25   5       0      0      0 S   0,0   0,0   0:00.00 ksmd                                            
+     44 root      39  19       0      0      0 S   0,0   0,0   0:00.00 khugepaged                                      
+[1]+  Stopped                 top
+
 vk@vk-desktop:~$ ps -ef | grep top
 avahi       1061       1  0 19:44 ?        00:00:00 avahi-daemon: running [vk-desktop.local]
 root        1063       1  0 19:44 ?        00:00:00 /usr/sbin/atopacctd
@@ -177,20 +182,29 @@ root        1111       1  0 19:44 ?        00:00:00 /usr/bin/atop -R -w /var/log
 vk          2922    2140  0 19:45 ?        00:00:00 /usr/libexec/xdg-desktop-portal
 vk          2930    2140  0 19:45 ?        00:00:00 /usr/libexec/xdg-desktop-portal-gnome
 vk          2947    2140  0 19:45 ?        00:00:00 /usr/libexec/xdg-desktop-portal-gtk
-vk          7574    7533  0 20:03 pts/3    00:00:00 top
-vk          7587    7578  0 20:04 pts/4    00:00:00 grep --color=auto top
-vk@vk-desktop:~$ sudo reptyr 7574
+vk          7855    7142  0 20:09 pts/2    00:00:00 top
+vk          7874    7142  0 20:10 pts/2    00:00:00 grep --color=auto top
+
+[1]+  Stopped                 top
+vk@vk-desktop:~$ disown 7855
+bash: warning: deleting stopped job 1 with process group 7855
 ```
+Далее,в другой сессии, после `sudo apt install reptyr` и редактирования `/etc/sysctl.d/10-ptrace.conf` (`kernel.yama.ptrace_scope = 0`) 
+```
+vk@vk-desktop:~$ screen
+vk@vk-desktop:~$ reptyr 7855
+MiB Mem :  15957,0 total,  10405,2 free,   2760,9 used,   2790,9 buff/cache
+MiB Swap:   2048,0 total,   2048,0 free,      0,0 used.  12840,2 avail Mem 
 
-
-vk@vk-desktop:~$ ps -ef | grep ping
-vk          2418    2059  0 июл10 ?     00:00:01 /usr/libexec/gsd-housekeeping
-vk         27863   20447  0 19:40 pts/1    00:00:00 ping yandex.ru
-vk         28059   27865  0 19:41 pts/2    00:00:00 grep --color=auto ping
-
-vk@vk-desktop:~$ sudo reptyr -T 5466
-Unable to attach to pid 5466: Permission denied
-
+    PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND                                         
+   2227 root      20   0   24,2g  59608  36760 S   6,7   0,4   0:27.24 Xorg                                            
+   2381 vk        20   0 4373892 345904 113452 S   6,7   2,1   0:34.92 gnome-shell                                     
+   7855 vk        20   0   13232   4108   3228 R   6,7   0,0   0:00.01 top                                             
+      1 root      20   0  168968  14184   8116 S   0,0   0,1   0:05.05 systemd                                         
+      2 root      20   0       0      0      0 S   0,0   0,0   0:00.00 kthreadd                                        
+    ...........................................................                                    
+     43 root      25   5       0      0      0 S   0,0   0,0   0:00.00 ksmd                                            
+     44 root      39  19       0      0      0 S   0,0   0,0   0:00.00 khugepaged       
 ```
 >14. `sudo echo string > /root/new_file` не даст выполнить перенаправление под обычным пользователем, так как перенаправлением занимается процесс shell'а, который запущен без `sudo` под вашим пользователем. Для решения данной проблемы можно использовать конструкцию `echo string | sudo tee /root/new_file`. Узнайте что делает команда `tee` и почему в отличие от `sudo echo` команда с `sudo tee` будет работать.
 ### Ответ
