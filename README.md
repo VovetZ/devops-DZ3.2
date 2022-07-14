@@ -155,29 +155,42 @@ Connection to localhost closed.
 ```
 >13. Бывает, что есть необходимость переместить запущенный процесс из одной сессии в другую. Попробуйте сделать это, воспользовавшись `reptyr`. Например, так можно перенести в `screen` процесс, который вы запустили по ошибке в обычной SSH-сессии.
 ### Ответ
-Запустил в одной из сессий ping
+
+В итоге все получилось ))
+
+Запустил в одной из сессий `top`, далее `Ctrl+Z`
+
 ```bash
 vk@vk-desktop:/etc/netplan$ ping yandex.ru
 PING yandex.ru (5.255.255.80) 56(84) bytes of data.
 64 bytes from yandex.ru (5.255.255.80): icmp_seq=1 ttl=250 time=4.97 ms
 64 bytes from yandex.ru (5.255.255.80): icmp_seq=2 ttl=250 time=4.99 ms
 64 bytes from yandex.ru (5.255.255.80): icmp_seq=3 ttl=250 time=4.95 ms
-64 bytes from yandex.ru (5.255.255.80): icmp_seq=4 ttl=250 time=5.03 ms
-64 bytes from yandex.ru (5.255.255.80): icmp_seq=5 ttl=250 time=5.05 ms
-64 bytes from yandex.ru (5.255.255.80): icmp_seq=6 ttl=250 time=4.96 ms
-64 bytes from yandex.ru (5.255.255.80): icmp_seq=7 ttl=250 time=4.91 ms
-64 bytes from yandex.ru (5.255.255.80): icmp_seq=8 ttl=250 time=4.96 ms
 ```
-Далее,в другой сессии, после `sudo apt install reptyr` и редактирования /etc/sysctl.d/10-ptrace.conf (kernel.yama.ptrace_scope исправить на 0 )
-Так и не удалось добиться, чтобы `reptyr` заработал (((
-```bash
+Далее,в другой сессии, после `sudo apt install reptyr` и редактирования `/etc/sysctl.d/10-ptrace.conf` (`kernel.yama.ptrace_scope = 0`)
+
+```
+vk@vk-desktop:~$ ps -ef | grep top
+avahi       1061       1  0 19:44 ?        00:00:00 avahi-daemon: running [vk-desktop.local]
+root        1063       1  0 19:44 ?        00:00:00 /usr/sbin/atopacctd
+root        1111       1  0 19:44 ?        00:00:00 /usr/bin/atop -R -w /var/log/atop/atop_20220714 600
+vk          2922    2140  0 19:45 ?        00:00:00 /usr/libexec/xdg-desktop-portal
+vk          2930    2140  0 19:45 ?        00:00:00 /usr/libexec/xdg-desktop-portal-gnome
+vk          2947    2140  0 19:45 ?        00:00:00 /usr/libexec/xdg-desktop-portal-gtk
+vk          7574    7533  0 20:03 pts/3    00:00:00 top
+vk          7587    7578  0 20:04 pts/4    00:00:00 grep --color=auto top
+vk@vk-desktop:~$ sudo reptyr 7574
+```
+
+
 vk@vk-desktop:~$ ps -ef | grep ping
 vk          2418    2059  0 июл10 ?     00:00:01 /usr/libexec/gsd-housekeeping
 vk         27863   20447  0 19:40 pts/1    00:00:00 ping yandex.ru
 vk         28059   27865  0 19:41 pts/2    00:00:00 grep --color=auto ping
 
-vagrant@vagrant:~$ reptyr -T 1049
-Unable to attach to pid 1225: Operation not permitted
+vk@vk-desktop:~$ sudo reptyr -T 5466
+Unable to attach to pid 5466: Permission denied
+
 ```
 >14. `sudo echo string > /root/new_file` не даст выполнить перенаправление под обычным пользователем, так как перенаправлением занимается процесс shell'а, который запущен без `sudo` под вашим пользователем. Для решения данной проблемы можно использовать конструкцию `echo string | sudo tee /root/new_file`. Узнайте что делает команда `tee` и почему в отличие от `sudo echo` команда с `sudo tee` будет работать.
 ### Ответ
