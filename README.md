@@ -157,19 +157,25 @@ Connection to localhost closed.
 ### Ответ
 Запустил в одной из сессий ping
 ```bash
-vagrant@vagrant:~$ ping yandex.ru
-PING yandex.ru (77.88.55.77) 56(84) bytes of data.
-64 bytes from yandex.ru (77.88.55.77): icmp_seq=1 ttl=56 time=153 ms
-64 bytes from yandex.ru (77.88.55.77): icmp_seq=2 ttl=56 time=92.7 ms
-64 bytes from yandex.ru (77.88.55.77): icmp_seq=3 ttl=56 time=62.0 ms
-64 bytes from yandex.ru (77.88.55.77): icmp_seq=4 ttl=56 time=125 ms
+vk@vk-desktop:/etc/netplan$ ping yandex.ru
+PING yandex.ru (5.255.255.80) 56(84) bytes of data.
+64 bytes from yandex.ru (5.255.255.80): icmp_seq=1 ttl=250 time=4.97 ms
+64 bytes from yandex.ru (5.255.255.80): icmp_seq=2 ttl=250 time=4.99 ms
+64 bytes from yandex.ru (5.255.255.80): icmp_seq=3 ttl=250 time=4.95 ms
+64 bytes from yandex.ru (5.255.255.80): icmp_seq=4 ttl=250 time=5.03 ms
+64 bytes from yandex.ru (5.255.255.80): icmp_seq=5 ttl=250 time=5.05 ms
+64 bytes from yandex.ru (5.255.255.80): icmp_seq=6 ttl=250 time=4.96 ms
+64 bytes from yandex.ru (5.255.255.80): icmp_seq=7 ttl=250 time=4.91 ms
+64 bytes from yandex.ru (5.255.255.80): icmp_seq=8 ttl=250 time=4.96 ms
 ```
 Далее,в другой сессии, после `sudo apt install reptyr` и редактирования /etc/sysctl.d/10-ptrace.conf (kernel.yama.ptrace_scope исправить на 0 )
 Так и не удалось добиться, чтобы `reptyr` заработал (((
 ```bash
-vagrant@vagrant:~$ ps -ef | grep ping
-vagrant     1049     990  0 18:09 pts/0    00:00:00 ping yandex.ru
-vagrant     1056    1040  0 18:09 pts/1    00:00:00 grep --color=auto ping
+vk@vk-desktop:~$ ps -ef | grep ping
+vk          2418    2059  0 июл10 ?     00:00:01 /usr/libexec/gsd-housekeeping
+vk         27863   20447  0 19:40 pts/1    00:00:00 ping yandex.ru
+vk         28059   27865  0 19:41 pts/2    00:00:00 grep --color=auto ping
+
 vagrant@vagrant:~$ reptyr -T 1049
 Unable to attach to pid 1225: Operation not permitted
 ```
